@@ -1,13 +1,9 @@
 #include <stdio.h>
-#include <string.h>
-#include <stdbool.h>
-
-#define MAX_LINE_SIZE 1024
 
 int main() {
+  FILE *fp = fopen("../input.txt", "r");
+  char line[1024];
   int total = 0;
-  char line[MAX_LINE_SIZE];
-  FILE *fp = fopen("input.txt", "r");
 
   if(fp == NULL) {
     perror("Error opening file");
@@ -15,21 +11,16 @@ int main() {
   }
 
   while (fgets(line, sizeof(line), fp) != NULL) {
-    int line_total = 0, first = 0, last;
-
-    for(size_t i = 0; i < strlen(line) - 1; i++) {
-      int number = line[i] - 0x30;
-
-      if (number >= 1 && number <= 9) {
-        if (!first) {
-          line_total += number * 10;
-          first = 1;
-        }
-        last = number;
+    int c_id = -1;
+    int first = 0, last = 0;
+    while (line[c_id++] != '\n') {
+      if (line[c_id] >= 0x31 && line[c_id] <= 0x39) {
+        int num = line[c_id] - 0x30;
+        first += first == 0 ? num * 10 : 0;
+        last = num;
       }
     }
-
-    total += line_total+last;
+    total += first+last;
   }
 
   fclose(fp);
