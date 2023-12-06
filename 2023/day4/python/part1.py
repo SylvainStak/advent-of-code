@@ -9,7 +9,7 @@ for line in _input:
   w_numbers = list(filter(lambda _: _ != '', line_splitted[0].split(':')[1].split(' ')))
   s_numbers = list(filter(lambda _: _ != '', line_splitted[1].split(' ')))
   valid = sum([1 for _ in s_numbers if _ in w_numbers])
-  total += 2**(valid-1) if valid > 1 else valid
+  total += 1 << (valid-1) if valid > 0 else 0
 
 print(total)
 
