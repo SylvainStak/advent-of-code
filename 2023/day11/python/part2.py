@@ -22,30 +22,26 @@ for i in range(len(fabric[0])):
   if not filled:
     empty_columns.append(i)
 
-m = 1000000
-
-# Expand empty lines in both directions
-offset = 0
-for i in empty_rows:
-  for _ in range(m-1):
-    fabric.insert(i+1+offset, ['.' for f in range(len(fabric[0]))])
-  offset+=m-1
-
-offset = 0
-for i in empty_columns:
-  for j in range(len(fabric)):
-    for _ in range(m-1):
-      fabric[j].insert(i+1+offset, '.')
-  offset+=m-1
-
 # Store all possible pair combinations between galaxies
+m = 1000000
 galaxies = []
 combos = []
 
 for x in range(len(fabric)):
   for y in range(len(fabric[0])):
     if fabric[x][y] == '#':
-      galaxies.append((x, y))
+      offset_x = 0
+      offset_y = 0
+
+      for r_id in empty_rows:
+        if r_id < x:
+          offset_x += m-1
+
+      for c_id in empty_columns:
+        if c_id < y:
+          offset_y += m-1
+
+      galaxies.append((x+offset_x, y+offset_y))
 
 for g1 in galaxies:
   for g2 in galaxies:
