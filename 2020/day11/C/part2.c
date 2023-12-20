@@ -5,6 +5,8 @@
 #include <stdbool.h>
 
 
+const int8_t directions[8][2] = {{1,-1}, {1,0}, {1,1}, {-1,-1}, {-1,0}, {-1,1}, {0,-1}, {0,1}};
+
 typedef struct Seats {
   char **layout;
   uint32_t rows;
@@ -74,24 +76,31 @@ void calc_next_gen(Seats *current, Seats *next) {
       }
 
       uint8_t neighbors = 0;
-      for (int8_t x = -1; x <= 1; x++){
-        for (int8_t y = -1; y <= 1; y++){
-          uint32_t w_x = i+x;
-          uint32_t w_y = j+y;
+      for (uint8_t dir = 0; dir < 8; dir++) {
+        bool finished = false;
+        int8_t deltaX = directions[dir][0];
+        int8_t deltaY = directions[dir][1];
+        int32_t x = i+deltaX;
+        int32_t y = j+deltaY;
+        while (!finished) {
           if (
-            0 <= w_x && w_x < current->rows &&
-            0 <= w_y && w_y < current->columns &&
-            (w_x != i || w_y != j) &&
-            current->layout[w_x][w_y] == '#'
+            !(0 <= x && x < current->rows) ||
+            !(0 <= y && y < current->columns) ||
+            current->layout[x][y] == 'L'
           ) {
+            finished = true;
+          } else if (current->layout[x][y] == '#') {
             neighbors++;
+            finished = true;
           }
+          x += deltaX;
+          y += deltaY;
         }
       }
 
       if (current->layout[i][j] == 'L' && neighbors == 0) {
         next->layout[i][j] = '#';
-      } else if (current->layout[i][j] == '#' && neighbors > 3){
+      } else if (current->layout[i][j] == '#' && neighbors > 4){
         next->layout[i][j] = 'L';
       }
     }
